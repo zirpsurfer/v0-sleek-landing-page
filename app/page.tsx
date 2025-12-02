@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { LiquidMetalBackground } from "@/components/liquid-metal-background"
 import { FloatingNavbar } from "@/components/floating-navbar"
 import { ShinyButton } from "@/components/ui/shiny-button"
@@ -308,7 +309,7 @@ export default function Home() {
 
 <div className="w-full md:w-1/2 border-r border-white/10">
   <Image 
-    src="/grace.png"
+    src="/gg.png"
     alt="Project Screenshot"
     width={1000}
     height={800}
@@ -330,16 +331,23 @@ export default function Home() {
         size="sm"
         className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs"
       >
-        View Site
-      </Button>
+<Link href="https://glowngrace.vercel.app" target="_blank">
+    Visit Site
+  </Link>      </Button>
     </div>
   </div>
 
   {/* PROJECT 2 */}
   <div className="flex flex-col md:flex-row bg-white/5 border border-white/10 rounded-lg overflow-hidden backdrop-blur-sm">
-    <div className="w-full md:w-1/2 border-r border-white/10">
-      <img src="/portfolio/site2.jpg" className="w-full h-full object-cover" alt="Project Screenshot" />
-    </div>
+<div className="w-full md:w-1/2 border-r border-white/10">
+  <Image 
+    src="/ubc.png"
+    alt="Project Screenshot"
+    width={1000}
+    height={800}
+    className="w-full h-full object-cover"
+  />
+</div>
 
     <div className="flex flex-col gap-3 p-5 text-white md:w-1/2">
       <Badge className="bg-white/10 w-fit border-white/20">E-Commerce</Badge>
@@ -350,16 +358,23 @@ export default function Home() {
       </p>
 
       <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
-        View Site
-      </Button>
+<Link href="https://urbanfitapparel.vercel.app" target="_blank">
+    Visit Site
+  </Link>      </Button>
     </div>
   </div>
 
   {/* PROJECT 3 */}
   <div className="flex flex-col md:flex-row bg-white/5 border border-white/10 rounded-lg overflow-hidden backdrop-blur-sm">
-    <div className="w-full md:w-1/2 border-r border-white/10">
-      <img src="/portfolio/site3.jpg" className="w-full h-full object-cover" alt="Project Screenshot" />
-    </div>
+ <div className="w-full md:w-1/2 border-r border-white/10">
+  <Image 
+    src="/bvg.png"
+    alt="Project Screenshot"
+    width={1000}
+    height={800}
+    className="w-full h-full object-cover"
+  />
+</div>
 
     <div className="flex flex-col gap-3 p-5 text-white md:w-1/2">
       <Badge className="bg-white/10 w-fit border-white/20">Restaurant</Badge>
@@ -370,16 +385,23 @@ export default function Home() {
       </p>
 
       <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
-        View Site
-      </Button>
+<Link href="https://glowngrace.vercel.app" target="_blank">
+    Visit Site
+  </Link>      </Button>
     </div>
   </div>
 
   {/* PROJECT 4 */}
   <div className="flex flex-col md:flex-row bg-white/5 border border-white/10 rounded-lg overflow-hidden backdrop-blur-sm">
-    <div className="w-full md:w-1/2 border-r border-white/10">
-      <img src="/portfolio/site4.jpg" className="w-full h-full object-cover" alt="Project Screenshot" />
-    </div>
+ <div className="w-full md:w-1/2 border-r border-white/10">
+  <Image 
+    src="/atx.png"
+    alt="Project Screenshot"
+    width={1000}
+    height={800}
+    className="w-full h-full object-cover"
+  />
+</div>
 
     <div className="flex flex-col gap-3 p-5 text-white md:w-1/2">
       <Badge className="bg-white/10 w-fit border-white/20">Real Estate</Badge>
@@ -389,9 +411,11 @@ export default function Home() {
         <strong>Pricing Tier:</strong> Growth Conversion Site ($1,300)
       </p>
 
-      <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
-        View Site
-      </Button>
+      <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs"
+      src = "https://altysdesign.vercel.app/">
+<Link href="https://altysdesign.vercel.app/" target="_blank">
+    Visit Site
+  </Link>      </Button>
     </div>
   </div>
 
