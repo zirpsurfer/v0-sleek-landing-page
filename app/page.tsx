@@ -411,8 +411,7 @@ export default function Home() {
         <strong>Pricing Tier:</strong> Growth Conversion Site ($1,300)
       </p>
 
-      <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs"
-      src = "https://altysdesign.vercel.app/">
+      <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
 <Link href="https://altysdesign.vercel.app/" target="_blank">
     Visit Site
   </Link>      </Button>
@@ -560,25 +559,44 @@ export default function Home() {
                   
                   <div className="space-y-4 md:space-y-6">
                     <p className="text-base md:text-xl lg:text-2xl xl:text-3xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
-                      We&#39;re obsessed with helping companies master their go-to-market operations. By combining expert knowledge with cutting-edge automation and AI, we transform chaotic processes into streamlined, data-driven engines.
+                    At HireWebDev, we are obsessed with building high-quality, SEO-optimized websites for small businesses across the United States.
+Our mission is to help business owners establish a professional online presence, attract more customers, and simplify the way they operate.
                     </p>
                     <p className="text-base md:text-xl lg:text-2xl xl:text-3xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
-                      Our team specializes in HubSpot, Salesforce, Zapier, Make, BigQuery, and dbt. We design systems that scale with your business—whether you need CRM workflows, attribution models, or complete revenue operations transformation.
+      Alongside web development, we offer local SEO setup, booking/payment integrations, analytics tracking, and light automation workflows to help you work smarter, not harder.
+
+We believe great websites shouldn’t be complicated or overpriced — they should simply work.
+With HireWebDev, you get a partner committed to growing your business, one page at a time.
                     </p>
                   </div>
 
-                  <div className="mt-8 pt-8 border-t border-white/20">
-                    <p className="text-sm md:text-base text-gray-400 font-open-sans-custom mb-4">
-                      <strong>Tools We Specialize In:</strong>
-                    </p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {["N8N", "Fulfil", "Zapier", "Shopify", "BigQuery", "dbt"].map((tool, i) => (
-                        <div key={i} className="px-3 py-2 bg-white/5 border border-white/10 rounded text-xs text-gray-300 font-open-sans-custom text-center">
-                          {tool}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                 <div className="mt-8 pt-8 border-t border-white/20">
+  <p className="text-sm md:text-base text-gray-400 font-open-sans-custom mb-4">
+    <strong>Tools We Specialize In:</strong>
+  </p>
+
+  <div className="grid grid-cols-3 gap-3">
+    {[
+      "WordPress",
+      "Google Analytics",
+      "Zapier",
+      "Shopify",
+      "Figma",
+      "Next.js",
+      "Stripe",
+      "Tailwind CSS",
+      "Calendly",
+    ].map((tool, i) => (
+      <div
+        key={i}
+        className="px-3 py-2 bg-white/5 border border-white/10 rounded text-xs text-gray-300 font-open-sans-custom text-center"
+      >
+        {tool}
+      </div>
+    ))}
+  </div>
+</div>
+
                 </div>
               </div>
             </div>
@@ -601,19 +619,19 @@ export default function Home() {
           />
 
           <div className="relative z-10 mx-auto w-full max-w-5xl mt-[5vh]">
-            <ContactCard
+           <ContactCard
               title="Let's Build Your GTM Engine"
               description="Ready to transform your go-to-market operations? Tell us about your challenges and we'll create a tailored strategy to streamline automation, analytics, and revenue operations."
               contactInfo={[
                 {
-                  icon: MailIcon,
-                  label: "Email",
-                  value: "hirewebdevsales@gmail.com",
-                },
-                {
                   icon: PhoneIcon,
                   label: "Phone",
                   value: "+91 9168171111",
+                },
+                {
+                  icon: MailIcon,
+                  label: "Email",
+                  value: "hirewebdevsales@gmail.com",
                 },
                 {
                   icon: MapPinIcon,
@@ -667,7 +685,7 @@ export default function Home() {
                   Schedule a Call
                 </Button>
               </form>
-            </ContactCard>
+            </ContactCard> 
           </div>
         </section>
       </div>
