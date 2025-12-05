@@ -464,7 +464,7 @@ export default function Home() {
                   <p className="text-4xl text-white font-bold mt-6">$499</p>
 
                   <ul className="mt-6 space-y-2 text-gray-300 text-sm">
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> 4-page website</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> 4-7-page website</li>
                     <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Mobile Responsive</li>
                     <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Basic SEO Setup</li>
                     <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Contact/Inquiry Form</li>
@@ -487,7 +487,7 @@ export default function Home() {
                   <p className="text-4xl text-white font-bold mt-6">$899</p>
 
                   <ul className="mt-6 space-y-2 text-gray-300 text-sm">
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> 7-page website</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> 7+-page website</li>
                     <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Local SEO + Analytics</li>
                     <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Booking & Payment Integration</li>
                     <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Lead Capture Automations</li>
