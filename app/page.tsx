@@ -4,18 +4,19 @@ import Link from "next/link"
 import { LiquidMetalBackground } from "@/components/liquid-metal-background"
 import { FloatingNavbar } from "@/components/floating-navbar"
 import { ShinyButton } from "@/components/ui/shiny-button"
+import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ContactCard } from "@/components/ui/contact-card"
-import { MailIcon, PhoneIcon, MapPinIcon } from 'lucide-react'
+import { MailIcon, PhoneIcon, MapPinIcon, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useEffect, useRef, useState } from "react" // Added useState
+import { useEffect, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { Check } from 'lucide-react'
 import Image from "next/image"
 import { DotPattern } from "@/components/ui/dot-pattern"
+import { ContactModal } from "@/components/contact-modal"
 
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -24,39 +25,37 @@ export default function Home() {
   const aboutSectionRef = useRef<HTMLDivElement>(null)
   const contactSectionRef = useRef<HTMLDivElement>(null)
 
-  // OPTIMIZATION: Cache container width to prevent layout thrashing
-  // Reading .offsetWidth inside a scroll listener forces a reflow every frame.
-  const containerWidthRef = useRef(0)
+  const [submitted, setSubmitted] = useState(false)
+  const { toast } = useToast()
+
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+  const [containerWidth, setContainerWidth] = useState(0)
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current
     if (!scrollContainer) return
 
-    // OPTIMIZATION: Update width only on resize, not on every scroll tick
     const updateWidth = () => {
-      containerWidthRef.current = scrollContainer.offsetWidth
+      setContainerWidth(scrollContainer.offsetWidth)
     }
-    
-    // Initial calculation
+
     updateWidth()
-    window.addEventListener('resize', updateWidth)
+    window.addEventListener("resize", updateWidth)
 
     const handleWheel = (e: WheelEvent) => {
       const delta = e.deltaY
       const currentScroll = scrollContainer.scrollLeft
-      
-      // OPTIMIZATION: Use the cached width
-      const containerWidth = containerWidthRef.current
-      if (containerWidth === 0) return 
+
+      if (containerWidth === 0) return
 
       const currentSection = Math.round(currentScroll / containerWidth)
 
       // --- SECTION 2: PORTFOLIO ---
       if (currentSection === 2 && portfolioRef.current) {
         const portfolioSection = portfolioRef.current
-        const isAtTop = portfolioSection.scrollTop <= 0 // logic fix: use <= 0
-        // OPTIMIZATION: Allow a 1px buffer for "bottom" detection to prevent float rounding errors
-        const isAtBottom = Math.abs((portfolioSection.scrollTop + portfolioSection.clientHeight) - portfolioSection.scrollHeight) <= 2
+        const isAtTop = portfolioSection.scrollTop <= 0
+        const isAtBottom =
+          Math.abs(portfolioSection.scrollTop + portfolioSection.clientHeight - portfolioSection.scrollHeight) <= 2
 
         if (delta > 0 && !isAtBottom) return
         if (delta < 0 && !isAtTop) return
@@ -77,7 +76,8 @@ export default function Home() {
       if (currentSection === 3 && pricingSectionRef.current) {
         const pricingSection = pricingSectionRef.current
         const isAtTop = pricingSection.scrollTop <= 0
-        const isAtBottom = Math.abs((pricingSection.scrollTop + pricingSection.clientHeight) - pricingSection.scrollHeight) <= 2
+        const isAtBottom =
+          Math.abs(pricingSection.scrollTop + pricingSection.clientHeight - pricingSection.scrollHeight) <= 2
 
         if (delta > 0 && !isAtBottom) return
         if (delta < 0 && !isAtTop) return
@@ -98,7 +98,7 @@ export default function Home() {
       if (currentSection === 4 && aboutSectionRef.current) {
         const aboutSection = aboutSectionRef.current
         const isAtTop = aboutSection.scrollTop <= 0
-        const isAtBottom = Math.abs((aboutSection.scrollTop + aboutSection.clientHeight) - aboutSection.scrollHeight) <= 2
+        const isAtBottom = Math.abs(aboutSection.scrollTop + aboutSection.clientHeight - aboutSection.scrollHeight) <= 2
 
         if (delta > 0 && !isAtBottom) return
         if (delta < 0 && !isAtTop) return
@@ -119,7 +119,8 @@ export default function Home() {
       if (currentSection === 5 && contactSectionRef.current) {
         const contactSection = contactSectionRef.current
         const isAtTop = contactSection.scrollTop <= 0
-        const isAtBottom = Math.abs((contactSection.scrollTop + contactSection.clientHeight) - contactSection.scrollHeight) <= 2
+        const isAtBottom =
+          Math.abs(contactSection.scrollTop + contactSection.clientHeight - contactSection.scrollHeight) <= 2
 
         if (delta > 0 && !isAtBottom) return
         if (delta < 0 && !isAtTop) return
@@ -144,34 +145,33 @@ export default function Home() {
         } else {
           targetSection = Math.max(currentSection - 1, 0)
         }
-        
-        // OPTIMIZATION: Only fire scrollTo if target is different to prevent micro-stutters
+
         if (targetSection !== currentSection) {
-            scrollContainer.scrollTo({
+          scrollContainer.scrollTo({
             left: targetSection * containerWidth,
             behavior: "smooth",
-            })
+          })
         }
       }
     }
 
     scrollContainer.addEventListener("wheel", handleWheel, { passive: false })
-    
+
     return () => {
-        scrollContainer.removeEventListener("wheel", handleWheel)
-        window.removeEventListener('resize', updateWidth)
+      scrollContainer.removeEventListener("wheel", handleWheel)
+      window.removeEventListener("resize", updateWidth)
     }
-  }, [])
+  }, [containerWidth])
 
   return (
     <main className="relative h-screen overflow-hidden">
       <LiquidMetalBackground />
 
-      {/* OPTIMIZATION: Reduced opacity calculation overhead by using a simple RGBA if possible, 
-          though keep as is for design fidelity. */}
       <div className="fixed inset-0 z-[5] bg-black/50" />
 
-      <FloatingNavbar />
+      <FloatingNavbar onContactClick={() => setIsContactModalOpen(true)} />
+
+      <ContactModal open={isContactModalOpen} onOpenChange={setIsContactModalOpen} />
 
       <div
         ref={scrollContainerRef}
@@ -201,7 +201,9 @@ export default function Home() {
               </p>
 
               <div className="flex justify-center">
-                <ShinyButton className="px-8 py-3 text-base">Get a Quote</ShinyButton>
+                <ShinyButton className="px-8 py-3 text-base" onClick={() => setIsContactModalOpen(true)}>
+                  Get a Quote
+                </ShinyButton>
               </div>
             </div>
           </div>
@@ -245,7 +247,7 @@ export default function Home() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-row gap-6 items-start">
+                      <div className="flex flex-row gap-6 w-full items-start">
                         <Check className="w-[1.05rem] h-[1.05rem] mt-2 text-white" strokeWidth={3} />
                         <div className="flex flex-col gap-1">
                           <p className="text-white font-open-sans-custom">Booking & Payments Setup</p>
@@ -263,7 +265,7 @@ export default function Home() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-row gap-6 items-start">
+                      <div className="flex flex-row gap-6 w-full items-start">
                         <Check className="w-[1.05rem] h-[1.05rem] mt-2 text-white" strokeWidth={3} />
                         <div className="flex flex-col gap-1">
                           <p className="text-white font-open-sans-custom">Automation Workflows</p>
@@ -272,7 +274,7 @@ export default function Home() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-row gap-6 items-start">
+                      <div className="flex flex-row gap-6 w-full items-start">
                         <Check className="w-[1.05rem] h-[1.05rem] mt-2 text-white" strokeWidth={3} />
                         <div className="flex flex-col gap-1">
                           <p className="text-white font-open-sans-custom">Business Intelligence & Insights</p>
@@ -316,11 +318,10 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:grid-cols-2">
-
               {/* PROJECT 1 */}
               <div className="flex flex-col md:flex-row bg-white/5 border border-white/10 rounded-lg overflow-hidden backdrop-blur-sm">
                 <div className="w-full md:w-1/2 border-r border-white/10 relative h-48 md:h-auto">
-                 {/* OPTIMIZATION: Added sizes prop and explicit lazy loading */}
+                  {/* OPTIMIZATION: Added sizes prop and explicit lazy loading */}
                   <Image
                     src="/gg.png"
                     alt="Glow & Grace Website"
@@ -334,11 +335,19 @@ export default function Home() {
                   <Badge className="bg-white/10 w-fit border-white/20">Salon Website</Badge>
                   <h3 className="text-xl font-bold">Glow & Grace Beauty Studio</h3>
                   <p className="text-gray-300 text-sm">
-                    <strong>Industry:</strong> Salon & Spa<br />
+                    <strong>Industry:</strong> Salon & Spa
+                    <br />
                     <strong>Pricing Tier:</strong> Growth Plan ($900)
                   </p>
-                  <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
-                    <Link href="https://glowngrace.vercel.app" target="_blank">Visit Site</Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs"
+                    asChild
+                  >
+                    <Link href="https://glowngrace.vercel.app" target="_blank">
+                      Visit Site
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -359,11 +368,19 @@ export default function Home() {
                   <Badge className="bg-white/10 w-fit border-white/20">E-Commerce</Badge>
                   <h3 className="text-xl font-bold">UrbanFit Apparel</h3>
                   <p className="text-gray-300 text-sm">
-                    <strong>Industry:</strong> Clothing & Retail<br />
+                    <strong>Industry:</strong> Clothing & Retail
+                    <br />
                     <strong>Pricing Tier:</strong> Full Business Plan ($2,400)
                   </p>
-                  <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
-                    <Link href="https://urbanfitapparel.vercel.app" target="_blank">Visit Site</Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs"
+                    asChild
+                  >
+                    <Link href="https://urbanfitapparel.vercel.app" target="_blank">
+                      Visit Site
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -384,11 +401,19 @@ export default function Home() {
                   <Badge className="bg-white/10 w-fit border-white/20">Restaurant</Badge>
                   <h3 className="text-xl font-bold">Bella Vista Grill</h3>
                   <p className="text-gray-300 text-sm">
-                    <strong>Industry:</strong> Restaurant & Food<br />
+                    <strong>Industry:</strong> Restaurant & Food
+                    <br />
                     <strong>Pricing Tier:</strong> Starter + Add-ons ($700)
                   </p>
-                  <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
-                    <Link href="https://glowngrace.vercel.app" target="_blank">Visit Site</Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs"
+                    asChild
+                  >
+                    <Link href="https://v0-bellavistagrill.vercel.app/" target="_blank">
+                      Visit Site
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -409,17 +434,23 @@ export default function Home() {
                   <Badge className="bg-white/10 w-fit border-white/20">Real Estate</Badge>
                   <h3 className="text-xl font-bold">Sunrise Property Group</h3>
                   <p className="text-gray-300 text-sm">
-                    <strong>Industry:</strong> Real Estate Agency<br />
+                    <strong>Industry:</strong> Real Estate Agency
+                    <br />
                     <strong>Pricing Tier:</strong> Growth Conversion Site ($1,300)
                   </p>
-                  <Button variant="outline" size="sm" className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs">
-                    <Link href="https://altysdesign.vercel.app/" target="_blank">Visit Site</Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-fit bg-white/5 border-white/20 hover:bg-white/10 text-xs"
+                    asChild
+                  >
+                    <Link href="https://altysdesign.vercel.app/" target="_blank">
+                      Visit Site
+                    </Link>
                   </Button>
                 </div>
               </div>
-
             </div>
-
           </div>
         </section>
 
@@ -453,25 +484,39 @@ export default function Home() {
 
             {/* Pricing Grid */}
             <div className="grid gap-6 md:grid-cols-3">
-
               {/* Tier 1 — Starter */}
               <div className="relative bg-white/5 border border-white/15 rounded-xl backdrop-blur-sm p-6 flex flex-col justify-between hover:bg-white/10 transition">
                 <DotPattern width={6} height={6} />
+
                 <div>
                   <h2 className="text-white text-2xl font-semibold font-open-sans-custom mb-2">Starter</h2>
-                  <p className="text-gray-300 text-sm">Perfect for small businesses launching online.</p>
+                  <p className="text-gray-300 text-sm">A professional presence to get your business online.</p>
 
                   <p className="text-4xl text-white font-bold mt-6">$499</p>
 
                   <ul className="mt-6 space-y-2 text-gray-300 text-sm">
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> 4-7-page website</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Mobile Responsive</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Basic SEO Setup</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Contact/Inquiry Form</li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> 3-5 page website
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Mobile-optimized design
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Contact form setup
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Basic SEO + Speed Optimization
+                    </li>
                   </ul>
                 </div>
 
-                <Button size="lg" className="mt-8 bg-white text-black hover:bg-gray-100 font-semibold">Start Project</Button>
+                <Button
+                  size="lg"
+                  className="mt-8 bg-white text-black hover:bg-gray-100 font-semibold"
+                  onClick={() => setIsContactModalOpen(true)}
+                >
+                  Start Project
+                </Button>
               </div>
 
               {/* Tier 2 — Growth (Highlighted) */}
@@ -487,14 +532,28 @@ export default function Home() {
                   <p className="text-4xl text-white font-bold mt-6">$899</p>
 
                   <ul className="mt-6 space-y-2 text-gray-300 text-sm">
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> 7+-page website</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Local SEO + Analytics</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Booking & Payment Integration</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Lead Capture Automations</li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> 7+-page website
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Local SEO + Analytics
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Booking & Payment Integration
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Lead Capture Automations
+                    </li>
                   </ul>
                 </div>
 
-                <Button size="lg" className="mt-8 bg-white text-black hover:bg-gray-100 font-semibold">Choose Growth</Button>
+                <Button
+                  size="lg"
+                  className="mt-8 bg-white text-black hover:bg-gray-100 font-semibold"
+                  onClick={() => setIsContactModalOpen(true)}
+                >
+                  Choose Growth
+                </Button>
               </div>
 
               {/* Tier 3 — Scale */}
@@ -508,104 +567,115 @@ export default function Home() {
                   <p className="text-4xl text-white font-bold mt-6">$1499+</p>
 
                   <ul className="mt-6 space-y-2 text-gray-300 text-sm">
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Full Shopify/Webflow Build</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Automated Email Workflows</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> CRM + Retargeting Setup</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 text-white" /> Ongoing Optimizations</li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Full Shopify/Webflow Build
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Automated Email Workflows
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> CRM + Retargeting Setup
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 text-white" /> Ongoing Optimizations
+                    </li>
                   </ul>
                 </div>
 
-                <Button size="lg" className="mt-8 bg-white text-black hover:bg-gray-100 font-semibold">Request Proposal</Button>
+                <Button
+                  size="lg"
+                  className="mt-8 bg-white text-black hover:bg-gray-100 font-semibold"
+                  onClick={() => setIsContactModalOpen(true)}
+                >
+                  Request Proposal
+                </Button>
               </div>
-
             </div>
           </div>
         </section>
 
         {/* Index 4: About */}
-      <section
-  id="about"
-  ref={aboutSectionRef}
-  className="relative min-w-full snap-start overflow-y-auto px-4 pt-24 pb-20 [&::-webkit-scrollbar]:hidden"
-  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
->
-  <div
-    aria-hidden="true"
-    className={cn(
-      "absolute inset-0 z-0 size-full pointer-events-none",
-      "bg-[radial-gradient(rgba(255,255,255,0.1)_1px,transparent_1px)]",
-      "bg-[size:12px_12px]",
-      "opacity-30",
-    )}
-  />
+        <section
+          id="about"
+          ref={aboutSectionRef}
+          className="relative min-w-full snap-start overflow-y-auto px-4 pt-24 pb-20 [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <div
+            aria-hidden="true"
+            className={cn(
+              "absolute inset-0 z-0 size-full pointer-events-none",
+              "bg-[radial-gradient(rgba(255,255,255,0.1)_1px,transparent_1px)]",
+              "bg-[size:12px_12px]",
+              "opacity-30",
+            )}
+          />
 
-  <div className="relative z-10 mx-auto w-full max-w-7xl">
-    <div className="mx-auto mb-10 max-w-2xl text-center">
-      <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl text-white [text-shadow:_0_4px_20px_rgb(0_0_0_/_60%)] font-open-sans-custom">
-        About Us
-      </h1>
-      <p className="text-gray-300 mt-4 text-sm md:text-base font-open-sans-custom [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)]">
-        Learn more about our mission, philosophy, and specialized expertise.
-      </p>
-    </div>
-    <div className="mx-auto mb-10 max-w-7xl px-6 md:mb-20 xl:px-0">
-      <div className="relative flex flex-col items-center border-2 border-white/20 rounded-lg backdrop-blur-sm bg-white/5">
-        <DotPattern width={5} height={5} />
+          <div className="relative z-10 mx-auto w-full max-w-7xl">
+            <div className="mx-auto mb-10 max-w-2xl text-center">
+              <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl text-white [text-shadow:_0_4px_20px_rgb(0_0_0_/_60%)] font-open-sans-custom">
+                About Us
+              </h1>
+              <p className="text-gray-300 mt-4 text-sm md:text-base font-open-sans-custom [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)]">
+                Learn more about our mission, philosophy, and specialized expertise.
+              </p>
+            </div>
+            <div className="mx-auto mb-10 max-w-7xl px-6 md:mb-20 xl:px-0">
+              <div className="relative flex flex-col items-center border-2 border-white/20 rounded-lg backdrop-blur-sm bg-white/5">
+                <DotPattern width={5} height={5} />
 
-        <div className="absolute -left-1.5 -top-1.5 h-3 w-3 bg-white/80" />
-        <div className="absolute -bottom-1.5 -left-1.5 h-3 w-3 bg-white/80" />
-        <div className="absolute -right-1.5 -top-1.5 h-3 w-3 bg-white/80" />
-        <div className="absolute -bottom-1.5 -right-1.5 h-3 w-3 bg-white/80" />
+                <div className="absolute -left-1.5 -top-1.5 h-3 w-3 bg-white/80" />
+                <div className="absolute -bottom-1.5 -left-1.5 h-3 w-3 bg-white/80" />
+                <div className="absolute -right-1.5 -top-1.5 h-3 w-3 bg-white/80" />
+                <div className="absolute -bottom-1.5 -right-1.5 h-3 w-3 bg-white/80" />
 
-        {/* --- PADDING ADJUSTMENT MADE HERE --- */}
-        {/* Changed py-6 (1.5rem) to py-10 (2.5rem) for better mobile spacing */}
-        <div className="relative z-20 mx-auto max-w-5xl rounded-[40px] py-10 md:p-10 xl:py-20">
+                <div className="relative z-20 mx-auto max-w-5xl rounded-[40px] py-10 md:p-10 xl:py-20">
+                  <div className="space-y-4 md:space-y-6">
+                    <p className="text-sm md:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
+                      At HireWebDev, we are obsessed with building high-quality, SEO-optimized websites for small
+                      businesses across the United States. Our mission is to help business owners establish a
+                      professional online presence, attract more customers, and simplify the way they operate.
+                    </p>
+                    <p className="text-sm md:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
+                      Alongside web development, we offer local SEO setup, booking/payment integrations, analytics
+                      tracking, and light automation workflows to help you work smarter, not harder. We believe great
+                      websites shouldn’t be complicated or overpriced — they should simply work. With HireWebDev, you
+                      get a partner committed to growing your business, one page at a time.
+                    </p>
+                  </div>
 
-          <div className="space-y-4 md:space-y-6">
-            <p className="text-sm md:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
-              At HireWebDev, we are obsessed with building high-quality, SEO-optimized websites for small businesses across the United States.
-              Our mission is to help business owners establish a professional online presence, attract more customers, and simplify the way they operate.
-            </p>
-            <p className="text-sm md:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
-              Alongside web development, we offer local SEO setup, booking/payment integrations, analytics tracking, and light automation workflows to help you work smarter, not harder.
+                  <div className="mt-8 pt-8 border-t border-white/20">
+                    <p className="text-sm md:text-base text-gray-400 font-open-sans-custom mb-4">
+                      <strong>Tools We Specialize In:</strong>
+                    </p>
 
-              We believe great websites shouldn’t be complicated or overpriced — they should simply work.
-              With HireWebDev, you get a partner committed to growing your business, one page at a time.
-            </p>
-          </div>
-
-          <div className="mt-8 pt-8 border-t border-white/20">
-            <p className="text-sm md:text-base text-gray-400 font-open-sans-custom mb-4">
-              <strong>Tools We Specialize In:</strong>
-            </p>
-
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                "WordPress",
-                "Google Analytics",
-                "Zapier",
-                "Shopify",
-                "Figma",
-                "Next.js",
-                "Stripe",
-                "Tailwind CSS",
-                "Calendly",
-              ].map((tool, i) => (
-                <div
-                  key={i}
-                  className="px-3 py-2 bg-white/5 border border-white/10 rounded text-xs text-gray-300 font-open-sans-custom text-center"
-                >
-                  {tool}
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        "WordPress",
+                        "Google Analytics",
+                        "Zapier",
+                        "Shopify",
+                        "Figma",
+                        "Next.js",
+                        "Stripe",
+                        "Tailwind CSS",
+                        "Calendly",
+                      ].map((tool, i) => (
+                        <div
+                          key={i}
+                          className="px-3 py-2 bg-white/5 border border-white/10 rounded text-xs text-gray-300 font-open-sans-custom text-center"
+                        >
+                          {tool}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
+        </section>
 
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
         {/* Index 5: Contact */}
         <section
           id="contact"
@@ -624,8 +694,8 @@ export default function Home() {
 
           <div className="relative z-10 mx-auto w-full max-w-5xl mt-[5vh]">
             <ContactCard
-              title="Let's Build Your GTM Engine"
-              description="Ready to transform your go-to-market operations? Tell us about your challenges and we'll create a tailored strategy to streamline automation, analytics, and revenue operations."
+              title="Let's Build Your Web Presence"
+              description="Ready to transform your online operations? Tell us about your challenges and we'll create a tailored strategy to build your website, optimize SEO and generate leads."
               contactInfo={[
                 {
                   icon: PhoneIcon,
@@ -645,48 +715,71 @@ export default function Home() {
                 },
               ]}
             >
-              <form action="" className="w-full space-y-4">
+              {/* Hidden iframe to avoid redirecting user to Google confirmation */}
+              <iframe name="hidden_iframe" style={{ display: "none" }}></iframe>
+
+              <form
+                action="https://forms.gle/yMM4vebRJnfrYLdj8"
+                method="POST"
+                target="hidden_iframe"
+                className="w-full space-y-4"
+                onSubmit={() => {
+                  setSubmitted(true)
+                  toast({
+                    title: "Message Sent!",
+                    description: "Thanks for reaching out. We’ll get back to you soon.",
+                    duration: 3000,
+                  })
+                }}
+              >
                 <div className="flex flex-col gap-2">
-                  <Label className="text-white [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)] font-open-sans-custom">
-                    Name
-                  </Label>
+                  <Label className="text-white font-open-sans-custom">Name</Label>
                   <Input
+                    name="entry.1996151955"
                     type="text"
                     placeholder="Your name"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)]"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                    required
                   />
                 </div>
+
                 <div className="flex flex-col gap-2">
-                  <Label className="text-white [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)] font-open-sans-custom">
-                    Email
-                  </Label>
+                  <Label className="text-white font-open-sans-custom">Email</Label>
                   <Input
+                    name="entry.1756661667"
                     type="email"
                     placeholder="your@email.com"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)]"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                    required
                   />
                 </div>
+
                 <div className="flex flex-col gap-2">
-                  <Label className="text-white [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)] font-open-sans-custom">
-                    Company
-                  </Label>
+                  <Label className="text-white font-open-sans-custom">Company</Label>
                   <Input
+                    name="entry.406372998"
                     type="text"
                     placeholder="Your company"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)]"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                   />
                 </div>
+
                 <div className="flex flex-col gap-2">
-                  <Label className="text-white [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)] font-open-sans-custom">
-                    Tell us about your web presence challenges
-                  </Label>
-                  <Textarea className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)]" placeholder="Describe your goals..." />
+                  <Label className="text-white font-open-sans-custom">Tell us about your web presence challenges</Label>
+                  <Textarea
+                    name="entry.1865774663"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                    placeholder="Describe your goals..."
+                    required
+                  />
                 </div>
+
                 <Button
-                  className="w-full bg-white text-black hover:bg-gray-100 [text-shadow:_0_1px_2px_rgb(0_0_0_/_10%)] font-open-sans-custom"
-                  type="button"
+                  className="w-full bg-white text-black hover:bg-gray-100 font-open-sans-custom"
+                  type="submit"
+                  disabled={submitted}
                 >
-                  Schedule a Call
+                  {submitted ? "Sent!" : "Schedule a Call"}
                 </Button>
               </form>
             </ContactCard>

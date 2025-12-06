@@ -1,7 +1,11 @@
 "use client"
 import { Button } from "@/components/ui/button"
 
-export function FloatingNavbar() {
+interface FloatingNavbarProps {
+  onContactClick?: () => void
+}
+
+export function FloatingNavbar({ onContactClick }: FloatingNavbarProps) {
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId)
     if (section) {
@@ -30,9 +34,9 @@ export function FloatingNavbar() {
               onClick={() => scrollToSection("portfolio")}
               className="text-sm font-open-sans-custom text-gray-300 transition-colors hover:text-white [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)]"
             >
-            Portfolio           
-          </button>
-  <button
+              Portfolio
+            </button>
+            <button
               onClick={() => scrollToSection("pricing")}
               className="text-sm font-open-sans-custom text-gray-300 transition-colors hover:text-white [text-shadow:_0_2px_6px_rgb(0_0_0_/_40%)]"
             >
@@ -55,6 +59,7 @@ export function FloatingNavbar() {
           <Button
             size="sm"
             className="bg-white text-black hover:bg-gray-100 [text-shadow:_0_1px_2px_rgb(0_0_0_/_10%)] font-open-sans-custom"
+            onClick={onContactClick}
           >
             Talk to Us
           </Button>
