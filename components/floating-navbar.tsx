@@ -1,5 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 interface FloatingNavbarProps {
   onContactClick?: () => void
@@ -18,8 +19,8 @@ export function FloatingNavbar({ onContactClick }: FloatingNavbarProps) {
       <div className="mx-auto max-w-7xl rounded-2xl border-2 border-white/10 bg-white/5 px-6 py-4 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <button onClick={() => scrollToSection("home")} className="cursor-pointer">
-            <div className="flex items-center gap-2 text-white [text-shadow:_0_2px_8px_rgb(0_0_0_/_40%)]">
-              <div className="text-lg font-bold font-open-sans-custom">HireWebDev</div>
+            <div className="flex items-center gap-2">
+              <Image src="/images/nbr.png" alt="NBR Logo" width={120} height={40} className="h-8 w-auto" priority />
             </div>
           </button>
 
