@@ -632,14 +632,14 @@ export default function Home() {
                 <div className="relative z-20 mx-auto max-w-5xl rounded-[40px] py-10 md:p-10 xl:py-20">
                   <div className="space-y-4 md:space-y-6">
                     <p className="text-sm md:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
-                      At NBR, we are obsessed with building high-quality, SEO-optimized websites for small businesses
+                      At HireWebDev, we are obsessed with building high-quality, SEO-optimized websites for small businesses
                       across the United States. Our mission is to help business owners establish a professional online
                       presence, attract more customers, and simplify the way they operate.
                     </p>
                     <p className="text-sm md:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
                       Alongside web development, we offer local SEO setup, booking/payment integrations, analytics
                       tracking, and light automation workflows to help you work smarter, not harder. We believe great
-                      websites shouldn’t be complicated or overpriced — they should simply work. With NBR, you get a
+                      websites shouldn’t be complicated or overpriced — they should simply work. With HireWebDev, you get a
                       partner committed to growing your business, one page at a time.
                     </p>
                   </div>
@@ -697,21 +697,18 @@ export default function Home() {
               title="Let's Build Your Web Presence"
               description="Ready to transform your online operations? Tell us about your challenges and we'll create a tailored strategy to build your website, optimize SEO and generate leads."
               contactInfo={[
-                {
-                  icon: PhoneIcon,
-                  label: "Phone",
-                  value: "+91 9168171111",
-                },
-                {
-                  icon: MailIcon,
-                  label: "Email",
-                  value: "nbrsales@gmail.com",
-                },
+              
                 {
                   icon: MapPinIcon,
                   label: "Address",
                   value: "Pune, MH",
+                },
+                 {
+                  icon: MailIcon,
+                  label: "Email",
+                  value: "hirewebdevsales@gmail.com",
                   className: "col-span-2",
+
                 },
               ]}
             >
