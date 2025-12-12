@@ -1,18 +1,19 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { memo, useCallback } from "react"
 
 interface FloatingNavbarProps {
   onContactClick?: () => void
 }
 
-export function FloatingNavbar({ onContactClick }: FloatingNavbarProps) {
-  const scrollToSection = (sectionId: string) => {
+export const FloatingNavbar = memo(({ onContactClick }: FloatingNavbarProps) => {
+  const scrollToSection = useCallback((sectionId: string) => {
     const section = document.getElementById(sectionId)
     if (section) {
       section.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })
     }
-  }
+  }, [])
 
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 px-4 py-4">
@@ -68,4 +69,6 @@ export function FloatingNavbar({ onContactClick }: FloatingNavbarProps) {
       </div>
     </nav>
   )
-}
+})
+
+FloatingNavbar.displayName = "FloatingNavbar"

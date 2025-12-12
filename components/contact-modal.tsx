@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useCallback, memo } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,49 +16,51 @@ interface ContactModalProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function ContactModal({ open, onOpenChange }: ContactModalProps) {
+export const ContactModal = memo(({ open, onOpenChange }: ContactModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      setIsSubmitting(true)
 
-    const formData = new FormData(e.currentTarget)
+      const formData = new FormData(e.currentTarget)
 
-    const params = new URLSearchParams()
-    params.append("entry.1996151955", formData.get("name") as string)
-    params.append("entry.1756661667", formData.get("email") as string)
-    params.append("entry.406372998", formData.get("company") as string)
-    params.append("entry.1865774663", formData.get("message") as string)
+      const params = new URLSearchParams()
+      params.append("entry.1996151955", formData.get("name") as string)
+      params.append("entry.1756661667", formData.get("email") as string)
+      params.append("entry.406372998", formData.get("company") as string)
+      params.append("entry.1865774663", formData.get("message") as string)
 
-    try {
-      // POST to Google Form
-      await fetch(
-        "https://docs.google.com/forms/d/e/1FAIpQLSe-OgT19gHdZkgkvFamTbuCf-qZ_yVPu4VPW20n__4Jr9A42g/formResponse",
-        {
-          method: "POST",
-          body: params,
-          mode: "no-cors",
-        },
-      )
+      try {
+        await fetch(
+          "https://docs.google.com/forms/d/e/1FAIpQLSe-OgT19gHdZkgkvFamTbuCf-qZ_yVPu4VPW20n__4Jr9A42g/formResponse",
+          {
+            method: "POST",
+            body: params,
+            mode: "no-cors",
+          },
+        )
 
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you within 24 hours.",
-      })
-      ;(e.target as HTMLFormElement).reset()
-      onOpenChange(false)
-    } catch (error) {
-      toast({
-        title: "Something went wrong",
-        description: "Please try again or contact us directly.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+        toast({
+          title: "Message sent!",
+          description: "We'll get back to you within 24 hours.",
+        })
+        ;(e.target as HTMLFormElement).reset()
+        onOpenChange(false)
+      } catch (error) {
+        toast({
+          title: "Something went wrong",
+          description: "Please try again or contact us directly.",
+          variant: "destructive",
+        })
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [toast, onOpenChange],
+  )
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -154,7 +156,6 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
           </Button>
         </form>
 
-        {/* Calendly CTA */}
         <div className="mt-4 pt-4 border-t border-white/10">
           <Button
             variant="outline"
@@ -175,4 +176,6 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
       </DialogContent>
     </Dialog>
   )
-}
+})
+
+ContactModal.displayName = "ContactModal"
