@@ -383,7 +383,7 @@ const AboutSection = memo(
             <div className="relative z-20 mx-auto max-w-5xl rounded-[40px] py-8 px-4 sm:p-10 xl:py-20">
               <div className="space-y-4 md:space-y-6">
                 <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
-                  At hwd, we are obsessed with building high-quality, SEO-optimized websites for small businesses. Our mission is to help business owners establish a professional online presence,
+                  At HWD, we are obsessed with building high-quality, SEO-optimized websites for small businesses. Our mission is to help business owners establish a professional online presence,
                   attract more customers, and simplify the way they operate.
                 </p>
                 <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-white/90 [text-shadow:_0_2px_10px_rgb(0_0_0_/_50%)] font-open-sans-custom leading-relaxed">
