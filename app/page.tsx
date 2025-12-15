@@ -4,10 +4,7 @@ import React, { useEffect, useRef, useState, useCallback, memo, forwardRef } fro
 import Link from "next/link"
 import Image from "next/image"
 import dynamic from "next/dynamic"
-const LiquidMetalBackground = dynamic(
-  () => import("@/components/liquid-metal-background").then((mod) => ({ default: mod.LiquidMetalBackground })),
-  { ssr: false },
-)
+// import { LiquidMetalBackground } from "@/components/liquid-metal-background"
 import { FloatingNavbar } from "@/components/floating-navbar"
 import { ShinyButton } from "@/components/ui/shiny-button"
 import { useToast } from "@/components/ui/use-toast"
@@ -24,6 +21,7 @@ import { Badge } from "@/components/ui/badge"
 import { DotPattern } from "@/components/ui/dot-pattern"
 import { MailIcon, MapPinIcon, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { LiquidMetalBackground } from "@/components/liquid-metal-background"
 
 const FEATURES_DATA = [
   { title: "Website Development", desc: "Modern, fast websites built for sales, not just design." },
@@ -39,28 +37,28 @@ const PORTFOLIO_PROJECTS = [
     img: "/gg.png",
     title: "Glow & Grace Beauty Studio",
     type: "Salon Website",
-    desc: "Industry: Salon & Spa | Pricing Tier: Growth Plan ($900)",
+    desc: "Industry: Salon & Spa | Pricing Tier: Growth Plan ($500)",
     link: "https://glowngrace.vercel.app",
   },
   {
     img: "/ubc.png",
     title: "UrbanFit Apparel",
     type: "E-Commerce",
-    desc: "Industry: Clothing & Retail | Pricing Tier: Full Business Plan ($2,400)",
+    desc: "Industry: Clothing & Retail | Pricing Tier: Full Business Plan ($2,000)",
     link: "https://urbanfitapparel.vercel.app",
   },
   {
     img: "/bvg.png",
     title: "Bella Vista Grill",
     type: "Restaurant",
-    desc: "Industry: Restaurant & Food | Pricing Tier: Starter + Add-ons ($700)",
+    desc: "Industry: Restaurant & Food | Pricing Tier: Starter + Add-ons ($1000)",
     link: "https://v0-bellavistagrill.vercel.app/",
   },
   {
     img: "/atx.png",
-    title: "Sunrise Property Group",
+    title: "Altys Group",
     type: "Real Estate",
-    desc: "Industry: Real Estate Agency | Pricing Tier: Growth Conversion Site ($1,300)",
+    desc: "Industry: Real Estate Agency | Pricing Tier: Growth Conversion Site ($800)",
     link: "https://altysdesign.vercel.app/",
   },
 ] as const

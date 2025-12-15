@@ -1,11 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { LiquidMetal } from "@paper-design/shaders-react"
 
 if (typeof window !== "undefined" && !window.__btoaPatched) {
-  window.__btoaPatched = true;
-  window.btoa = (str) => Buffer.from(str, "utf8").toString("base64");
+  window.__btoaPatched = true
+  window.btoa = (str) => Buffer.from(str, "utf8").toString("base64")
 }
 
 export function LiquidMetalBackground() {
@@ -16,25 +15,24 @@ export function LiquidMetalBackground() {
   }, [])
 
   if (!mounted) {
-    return <div className="absolute inset-0 -z-10 bg-[#00042e]" />
+    return <div className="absolute inset-0 -z-10 bg-black" />
   }
 
   return (
     <div className="absolute inset-0 -z-10">
-      <LiquidMetal
-        width="100%"
-        height="100%"
-        colorBack="#00042e"
-        colorTint="#5b4dc7"
-        repetition={4}
-        softness={0.45}
-        shiftRed={-0.5}
-        shiftBlue={-1}
-        distortion={0.1}
-        contour={1}
-        shape="none"
-        speed={0.4}
-        scale={2.2}
+      <div
+        className="w-full h-full"
+        style={{
+          background: `
+            radial-gradient(ellipse at 20% 30%, rgba(80, 80, 95, 0.5) 0%, transparent 55%),
+            radial-gradient(ellipse at 80% 70%, rgba(70, 70, 85, 0.45) 0%, transparent 55%),
+            radial-gradient(ellipse at 40% 80%, rgba(75, 75, 90, 0.48) 0%, transparent 55%),
+            radial-gradient(ellipse at 70% 20%, rgba(65, 65, 80, 0.4) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 50%, rgba(60, 60, 75, 0.3) 0%, transparent 60%),
+            linear-gradient(135deg, #000000 0%, #0f0f0f 50%, #000000 100%)
+          `,
+          backgroundSize: "100% 100%",
+        }}
       />
     </div>
   )
