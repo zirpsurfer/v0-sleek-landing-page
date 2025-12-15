@@ -11,7 +11,7 @@ export const FloatingNavbar = memo(({ onContactClick }: FloatingNavbarProps) => 
   const scrollToSection = useCallback((sectionId: string) => {
     const section = document.getElementById(sectionId)
     if (section) {
-      section.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })
+      section.scrollIntoView({ behavior: "smooth" })
     }
   }, [])
 
@@ -60,7 +60,7 @@ export const FloatingNavbar = memo(({ onContactClick }: FloatingNavbarProps) => 
 
           <Button
             size="sm"
-            className="bg-white text-black hover:bg-gray-100 [text-shadow:_0_1px_2px_rgb(0_0_0_/_10%)] font-open-sans-custom"
+            className="bg-white text-black hover:bg-gray-100 [text-shadow:_0_1px_2px_rgb(0_0_0_/_10%)] font-open-sans-custom font-semibold"
             onClick={onContactClick}
           >
             Talk to Us
